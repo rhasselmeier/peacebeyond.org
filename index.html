@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peace Beyond — Recovery, One Step at a Time</title>
+<meta name="description" content="Peace Beyond — a non-profit in formation, building solutions toward recovery for people facing burnout, ADHD, anxiety, and depression.">
+<style>
+  :root { --sage:#2f4a3e; --mist:#8fb8a8; --linen:#f7f6f1; --sun:#d9b98a; --ink:#2c352f; }
+  * { box-sizing:border-box; margin:0; }
+  body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--linen); color:var(--ink); line-height:1.75; }
+  .wrap { max-width:700px; margin:0 auto; padding:0 1.5rem; }
+  header { text-align:center; padding:5rem 0 3rem; }
+  .mark { font-size:2rem; color:var(--mist); letter-spacing:.3em; }
+  h1 { font-family:Georgia, serif; font-size:clamp(2rem,5vw,2.9rem); font-weight:500; color:var(--sage); margin:.7rem 0 .4rem; }
+  .tagline { font-family:Georgia, serif; font-style:italic; font-size:1.15rem; color:#5f7a6e; }
+  .soon { display:inline-block; margin-top:1.5rem; background:#fff; border:1px solid #dfe4dc; color:#5f7a6e; border-radius:999px; font-size:.8rem; letter-spacing:.16em; text-transform:uppercase; padding:.5rem 1.3rem; }
+  .body { background:#fff; border-radius:14px; padding:2rem 1.9rem; box-shadow:0 2px 14px rgba(47,74,62,.07); margin-bottom:2rem; }
+  .body p + p { margin-top:1rem; }
+  .body b { color:var(--sage); }
+  .steps { display:flex; justify-content:center; gap:.5rem; margin:2.2rem 0; color:var(--mist); font-size:1.1rem; letter-spacing:.3em; }
+  h2 { font-family:Georgia, serif; font-size:1.2rem; font-weight:500; color:var(--sage); text-align:center; margin-bottom:.9rem; }
+  form { display:grid; gap:.9rem; }
+  label { font-size:.83rem; font-weight:600; color:var(--sage); }
+  input, textarea { width:100%; padding:.7rem; border:1px solid #d5dcd3; border-radius:8px; background:#fdfdfb; font:inherit; font-size:.95rem; }
+  input:focus, textarea:focus { outline:2px solid var(--mist); }
+  .fineprint { font-size:.78rem; color:#7f8d84; line-height:1.55; }
+  .fineprint a { color:#5f7a6e; }
+  button { background:var(--sage); color:var(--linen); font-weight:600; padding:.85rem 1.7rem; border:0; border-radius:8px; cursor:pointer; letter-spacing:.04em; }
+  button:hover { background:#3c5d4e; }
+  #form-status { font-size:.9rem; margin-top:.4rem; color:var(--sage); }
+  .crisis { text-align:center; font-size:.85rem; color:#6d7d73; background:#eef2ec; border-radius:10px; padding: .9rem 1.2rem; margin-bottom:2.4rem; }
+  .crisis b { color:var(--sage); }
+  footer { border-top:1px solid #e2e7df; padding:1.8rem 0 2.4rem; text-align:center; font-size:.8rem; color:#8a988f; }
+  footer a { color:#5f7a6e; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="mark">&#10047;</div>
+    <h1>Peace Beyond</h1>
+    <p class="tagline">Recovery, one step at a time.</p>
+    <span class="soon">A non-profit in formation &middot; Coming soon</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="body">
+    <p>Some people hit a wall. Some burn all the way out. Some carry ADHD, anxiety, or depression through every ordinary day — and the distance between "keep going" and "can't" gets thin.</p>
+    <p><b>Peace Beyond</b> is being built for exactly those moments: a non-profit organization creating practical, step-by-step solutions toward recovery — not lectures, not quick fixes, but a path back, taken one honest step at a time.</p>
+    <p>We're laying the foundation now. If this speaks to you — as a future participant, supporter, or partner — leave your info below and walk with us from the beginning.</p>
+  </div>
+
+  <div class="steps">&#9679; &nbsp; &#9679; &nbsp; &#9679; &nbsp; &#9675; &nbsp; &#9675;</div>
+
+  <div class="body" id="contact">
+    <h2>Walk With Us</h2>
+    <form id="contact-form">
+      <div><label for="name">Name *</label><input id="name" name="name" required autocomplete="name"></div>
+      <div><label for="email">Email *</label><input id="email" name="email" type="email" required autocomplete="email"></div>
+      <div><label for="message">What brings you here? (optional)</label><textarea id="message" name="message" rows="3"></textarea></div>
+      <p class="fineprint">Your information is used only to share updates as Peace Beyond takes shape — see the <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Use</a>.</p>
+      <div><button type="submit">Keep Me Updated</button><div id="form-status" role="status"></div></div>
+    </form>
+  </div>
+
+  <div class="crisis">If you're in crisis right now, don't wait for us — call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US) to talk with someone today.</div>
+</div>
+
+<footer>
+  <div class="wrap">&copy; 2026 Peace Beyond &middot; <a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a></div>
+</footer>
+
+<script>
+const ENDPOINT = "PENDING_BRIDGE_URL";
+document.getElementById("contact-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target, s = document.getElementById("form-status");
+  const data = Object.fromEntries(new FormData(f).entries());
+  data.business = "PB"; data.source = "peacebeyond.org"; data.request_type = "Updates list";
+  if (ENDPOINT.startsWith("PENDING")) { s.textContent = "Sign-ups open shortly — check back soon."; return; }
+  try {
+    const r = await fetch(ENDPOINT, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+    if (!r.ok) throw 0;
+    f.reset(); s.textContent = "Thank you — we're glad you're here.";
+  } catch { s.textContent = "Something went wrong — please try again later."; }
+});
+</script>
+</body>
+</html>
