@@ -30,13 +30,56 @@
     <section class="light" id="path"><div class="shell"><div class="intro"><div class="micro">A different trajectory</div><h2>You built a life on capacity. Then capacity became the <em>cost.</em></h2></div><div class="steps"><article class="step"><div class="step-no micro">01 / Recognition</div><h3>Name what happened</h3><p>See the cycle beneath stalled work, flatness, avoidance, and private shame. Your system adapted. It did not fail.</p></article><article class="step"><div class="step-no micro">02 / Stabilization</div><h3>Reduce the load</h3><p>Stop treating depleted capacity like a character problem. Create enough margin for attention and your nervous system to recover.</p></article><article class="step"><div class="step-no micro">03 / Calm</div><h3>Build from truth</h3><p>Shape work and life around the mind you actually have—without abandoning ambition, autonomy, or the person beneath the output.</p></article></div></div></section>
     <section class="signals" id="recognize"><div class="signals-grid shell"><div><div class="micro" style="color:var(--amber-soft)">The masked pattern</div><h2>Burnout does not always look like collapse.</h2></div><div class="signal-list"><div class="signal"><b>Competent outside. Frozen inside.</b>You can deliver for others, then cannot begin the simplest task for yourself.</div><div class="signal"><b>Rest that does not restore.</b>Time off becomes scrolling, avoidance, or sleep without the return of interest.</div><div class="signal"><b>Success without reward.</b>Wins register intellectually, but the felt sense of satisfaction has gone quiet.</div><div class="signal"><b>More force. Less motion.</b>You push harder against shrinking capacity and read the friction as personal failure.</div></div></div></section>
     <section class="close"><div class="close-grid shell"><blockquote>Peace is not giving up. It is the point where you stop fighting your own nervous system.</blockquote><a class="button" href="#start">Begin with relief</a></div></section>
-    <section class="contact" id="start"><div class="contact-grid shell"><div><div class="micro" style="color:var(--amber-soft)">No reinvention required</div><h2>Begin where you are.</h2><p class="contact-copy">Peace Beyond is taking shape as a practical, shame-free place for 2e ADHD adults rebuilding after quiet burnout. Join the early list and follow the work from the beginning.</p></div><form class="form" id="contact-form"><div class="field"><label for="name">Name</label><input id="name" name="name" autocomplete="name" required></div><div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div><div class="field field-full"><label for="message">What brings you here? <span style="text-transform:none">(optional)</span></label><textarea id="message" name="message" rows="4"></textarea></div><p class="fineprint">Your information is used only to share Peace Beyond updates. See our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Use</a>.</p><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px"><div class="cf-turnstile" data-sitekey="0x4AAAAAAD8MVIhSPLH80f6N" data-theme="auto"></div><button class="button" type="submit">Keep me updated</button><p class="status" id="form-status" role="status" aria-live="polite"></p></form></div></section>
+    <section class="contact" id="start"><div class="contact-grid shell"><div><div class="micro" style="color:var(--amber-soft)">No reinvention required</div><h2>Begin where you are.</h2><p class="contact-copy">Peace Beyond is taking shape as a practical, shame-free place for 2e ADHD adults rebuilding after quiet burnout. Join the early list and follow the work from the beginning.</p></div><form class="form" id="contact-form"><div class="field"><label for="name">Name</label><input id="name" name="name" autocomplete="name" required></div><div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div><div class="field field-full"><label for="message">What brings you here? <span style="text-transform:none">(optional)</span></label><textarea id="message" name="message" rows="4"></textarea></div><p class="fineprint">Your information is used only to share Peace Beyond updates. See our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Use</a>.</p><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px"><div class="cf-turnstile" data-sitekey="0x4AAAAAAD8MVIhSPLH80f6N" data-theme="auto" data-callback="onTurnstileSuccess" data-expired-callback="onTurnstileExpire" data-error-callback="onTurnstileExpire"></div><button class="button" type="submit" disabled>Keep me updated</button><p class="status" id="form-status" role="status" aria-live="polite"></p></form></div></section>
   </main>
   <aside class="crisis"><div class="shell"><strong class="micro">Immediate support</strong><span>If you may hurt yourself or cannot stay safe, call or text <a href="tel:988">988</a> in the U.S. or contact your local emergency service. Peace Beyond offers education and reflection, not diagnosis or crisis care.</span></div></aside>
   <footer class="footer"><div class="shell foot"><span>© 2026 Peace Beyond</span><div class="foot-links"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div></div></footer>
   <script>
     const ENDPOINT="https://agii-vapi-bridge-9383.twil.io/web-contact";
-    document.getElementById("contact-form").addEventListener("submit",async event=>{event.preventDefault();const form=event.currentTarget,status=document.getElementById("form-status"),data=Object.fromEntries(new FormData(form).entries());data.business="PB";data.source="peacebeyond.org";data.request_type="Updates list";status.textContent="Sending…";try{const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});if(!response.ok)throw new Error();form.reset();status.textContent="Thank you. You are on the early list."}catch{status.textContent="Something went wrong. Please try again later."}});
+    const form=document.getElementById("contact-form");
+    const status=document.getElementById("form-status");
+    const submitBtn=form.querySelector('button[type="submit"]');
+    let inFlight=false;
+    function turnstileToken(){
+      const el=form.querySelector('[name="cf-turnstile-response"]');
+      if(el&&el.value)return el.value;
+      return window.turnstile?.getResponse?.()||"";
+    }
+    function resetTurnstile(){
+      if(window.turnstile)window.turnstile.reset();
+      submitBtn.disabled=true;
+    }
+    window.onTurnstileSuccess=function(){if(!inFlight)submitBtn.disabled=false};
+    window.onTurnstileExpire=function(){submitBtn.disabled=true};
+    form.addEventListener("submit",async event=>{
+      event.preventDefault();
+      if(inFlight)return;
+      const token=turnstileToken();
+      if(!token){
+        status.textContent="Please wait for the verification check to finish, then press Send.";
+        return;
+      }
+      const data=Object.fromEntries(new FormData(form).entries());
+      data.business="PB";
+      data.source="peacebeyond.org";
+      data.request_type="Updates list";
+      data["cf-turnstile-response"]=token;
+      inFlight=true;
+      submitBtn.disabled=true;
+      status.textContent="Sending…";
+      try{
+        const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+        if(!response.ok)throw new Error();
+        form.reset();
+        resetTurnstile();
+        status.textContent="Thank you. You are on the early list.";
+      }catch{
+        resetTurnstile();
+        status.textContent="Something went wrong. Please try again later.";
+      }finally{
+        inFlight=false;
+      }
+    });
   </script>
 </body>
 </html>
