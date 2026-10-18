@@ -51,6 +51,7 @@
     }
     window.onTurnstileSuccess=function(){if(!inFlight)submitBtn.disabled=false};
     window.onTurnstileExpire=function(){submitBtn.disabled=true};
+    window.addEventListener("load",function(){if(!window.turnstile)submitBtn.disabled=false});
     form.addEventListener("submit",async event=>{
       event.preventDefault();
       if(inFlight)return;
